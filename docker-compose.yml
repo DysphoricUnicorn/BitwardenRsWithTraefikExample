@@ -1,0 +1,22 @@
+version: "3"
+
+services:
+  bitwarden:
+    image: bitwardenrs/server
+    volumes:
+      - ./data:/data
+    environment:
+      SIGNUPS_ALLOWED: 'true' # you probably want to set this to false once you have setup your account
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.bitwarden.rule=Host(`bitwarden.site.example`)
+      - traefik.http.routers.bitwarden.tls=true
+      - traefik.http.routers.bitwarden.tls.certresolver=letsencrypt
+      - traefik.http.services.bitwarden.loadbalancer.server.port=80
+    restart: unless-stopped
+    networks:
+      - traefik
+
+networks:
+  traefik:
+    external: true
